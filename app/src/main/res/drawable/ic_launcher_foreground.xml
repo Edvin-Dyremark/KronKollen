@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A simple "krona" coin glyph centred in the adaptive safe zone. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,30c-13.25,0 -24,10.75 -24,24s10.75,24 24,24 24,-10.75 24,-24 -10.75,-24 -24,-24zM54,72c-9.94,0 -18,-8.06 -18,-18s8.06,-18 18,-18 18,8.06 18,18 -8.06,18 -18,18z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,42h6v8.5l6.2,-8.5h7.3l-8.1,10.6 8.6,12.4h-7.2l-5.6,-8.4 -1.2,1.5v6.9h-6z" />
+</vector>
