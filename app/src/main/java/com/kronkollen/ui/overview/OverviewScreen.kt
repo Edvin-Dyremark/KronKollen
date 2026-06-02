@@ -111,23 +111,12 @@ private fun InfoStrip(state: OverviewUiState) {
             "${Dates.displayIso(state.range.start)} – ${Dates.displayIso(state.range.end)}",
             style = MaterialTheme.typography.titleMedium,
         )
-        Row(
+        Text(
+            "${state.transactionCount} transaktioner",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 2.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(
-                "${state.transactionCount} transaktioner",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            state.latestDate?.let {
-                Text(
-                    "Senaste ${Dates.displayIso(it)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        )
     }
 }
 
@@ -154,7 +143,7 @@ private fun SpendingSection(state: OverviewUiState, onCategoryClick: (Long) -> U
                 )
                 Text(
                     Money.formatWhole(state.totalSpent),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
             }

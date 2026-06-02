@@ -53,6 +53,7 @@ import com.kronkollen.data.entity.CategoryEntity
 import com.kronkollen.ui.components.ColorDot
 import com.kronkollen.ui.components.colorOf
 import com.kronkollen.ui.theme.CategoryPalette
+import com.kronkollen.util.Dates
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,11 +61,27 @@ fun CategoriesScreen(
     viewModel: CategoriesViewModel = viewModel(factory = CategoriesViewModel.Factory),
 ) {
     val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val latestDate by viewModel.latestDate.collectAsStateWithLifecycle()
     var showAddDialog by rememberSaveable { mutableStateOf(false) }
     var pendingDelete by remember { mutableStateOf<CategoryEntity?>(null) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Kategorier") }) },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text("Kategorier")
+                        latestDate?.let {
+                            Text(
+                                "Senaste transaktion: ${Dates.displayIso(it)}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.outline,
+                            )
+                        }
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {
                 Icon(Icons.Filled.Add, contentDescription = "Ny kategori")
