@@ -56,6 +56,14 @@ class TransactionRepository(
 
     suspend fun deleteTransaction(id: Long) = transactionDao.deleteById(id)
 
+    suspend fun count(): Int = transactionDao.count()
+
+    suspend fun deleteAllTransactions() = transactionDao.deleteAll()
+
+    suspend fun insertEntities(entities: List<TransactionEntity>) {
+        transactionDao.insertAll(entities)
+    }
+
     private suspend fun currentRules(): List<Rule> =
         keywordRuleDao.getAll().map { Rule(it.keyword, it.categoryId) }
 

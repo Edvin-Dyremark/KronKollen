@@ -17,7 +17,8 @@ class KronKollenApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
-        // Populate a starter set of categories on first launch.
-        appScope.launch { container.categoryRepository.seedDefaultsIfEmpty() }
+        // First launch: seed demo categories, keyword rules and transactions so the app
+        // isn't empty. The demo transactions are replaced on the first real import.
+        appScope.launch { container.sampleDataSeeder.seedIfFirstRun() }
     }
 }

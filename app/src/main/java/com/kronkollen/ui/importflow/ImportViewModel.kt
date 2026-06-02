@@ -133,6 +133,11 @@ class ImportViewModel(
     fun confirmImport() {
         if (sheet == null) return
         viewModelScope.launch {
+            // Replace the seeded demo data the first time real data is imported.
+            if (settings.sampleDataPresent.first()) {
+                transactions.deleteAllTransactions()
+                settings.setSampleDataPresent(false)
+            }
             val result = transactions.commitImport(pendingCommit)
             settings.saveMapping(_state.value.mapping)
             _state.value = _state.value.copy(step = ImportStep.Done, result = result)

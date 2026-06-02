@@ -47,6 +47,9 @@ interface TransactionDao {
     @Query("SELECT COUNT(*) FROM transactions")
     fun observeCount(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM transactions")
+    suspend fun count(): Int
+
     /** Per-category expense totals (amount < 0) within an inclusive date range. */
     @Query(
         """
@@ -79,4 +82,7 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM transactions")
+    suspend fun deleteAll()
 }

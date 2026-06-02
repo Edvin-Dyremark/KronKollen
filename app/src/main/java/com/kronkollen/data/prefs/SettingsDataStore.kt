@@ -29,6 +29,15 @@ class SettingsDataStore(private val context: Context) {
         val outCol = intPreferencesKey("map_out_col")
         val inCol = intPreferencesKey("map_in_col")
         val dateFormat = stringPreferencesKey("map_date_format")
+        val sampleData = booleanPreferencesKey("sample_data_present")
+    }
+
+    /** True while the app is showing seeded demo data that a real import should replace. */
+    val sampleDataPresent: Flow<Boolean> =
+        context.dataStore.data.map { it[Keys.sampleData] ?: false }
+
+    suspend fun setSampleDataPresent(present: Boolean) {
+        context.dataStore.edit { it[Keys.sampleData] = present }
     }
 
     val mapping: Flow<ColumnMapping> = context.dataStore.data.map { p ->

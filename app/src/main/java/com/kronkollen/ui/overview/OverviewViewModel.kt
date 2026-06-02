@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.kronkollen.KronKollenApp
 import com.kronkollen.data.entity.CategoryEntity
+import com.kronkollen.data.prefs.SettingsDataStore
 import com.kronkollen.data.repo.CategoryRepository
 import com.kronkollen.data.repo.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,10 +54,15 @@ data class OverviewUiState(
 class OverviewViewModel(
     private val transactions: TransactionRepository,
     private val categoriesRepo: CategoryRepository,
+    settings: SettingsDataStore,
 ) : ViewModel() {
 
     private val preset = MutableStateFlow(RangePreset.THIS_YEAR)
     private val custom = MutableStateFlow<DateRange?>(null)
+
+    val isSampleData: StateFlow<Boolean> =
+        settings.sampleDataPresent
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     val uiState: StateFlow<OverviewUiState> =
         combine(preset, custom) { p, c -> p to resolveRange(p, c) }
@@ -135,6 +141,7 @@ class OverviewViewModel(
                 OverviewViewModel(
                     app.container.transactionRepository,
                     app.container.categoryRepository,
+                    app.container.settings,
                 )
             }
         }

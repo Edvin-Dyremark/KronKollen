@@ -46,6 +46,7 @@ fun OverviewScreen(
     viewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val isSample by viewModel.isSampleData.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Översikt") }) },
@@ -55,6 +56,10 @@ fun OverviewScreen(
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (isSample) {
+                item { DemoBanner() }
+            }
+
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(RangePreset.entries) { preset ->
@@ -133,6 +138,18 @@ private fun SpendingByCategoryCard(state: OverviewUiState, onCategoryClick: (Lon
                         .size(180.dp)
                         .aspectRatio(1f),
                 )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Totalt",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        Money.formatWhole(-state.totalSpent),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
             state.slices.forEach { slice ->
                 Row(
@@ -182,6 +199,25 @@ private fun TrendCard(state: OverviewUiState) {
                     .fillMaxWidth()
                     .height(170.dp)
                     .padding(top = 12.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun DemoBanner() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Exempeldata", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(
+                "Det här är påhittad data så att du ser hur appen funkar. " +
+                    "Importera en xlsx-fil från din bank så ersätts den med din egen ekonomi.",
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
