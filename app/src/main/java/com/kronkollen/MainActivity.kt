@@ -32,14 +32,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KronKollenTheme {
-                KronKollenApp()
+                AppRoot()
             }
         }
     }
 }
 
 @Composable
-private fun KronKollenApp() {
+private fun AppRoot() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route

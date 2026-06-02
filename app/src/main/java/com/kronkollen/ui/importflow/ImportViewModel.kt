@@ -131,13 +131,11 @@ class ImportViewModel(
     private var pendingCommit: List<ParsedTransaction> = emptyList()
 
     fun confirmImport() {
-        val data = sheet ?: return
+        if (sheet == null) return
         viewModelScope.launch {
             val result = transactions.commitImport(pendingCommit)
             settings.saveMapping(_state.value.mapping)
             _state.value = _state.value.copy(step = ImportStep.Done, result = result)
-            // Keep sheet so the user can see the summary; cleared on reset().
-            @Suppress("UNUSED_EXPRESSION") data
         }
     }
 

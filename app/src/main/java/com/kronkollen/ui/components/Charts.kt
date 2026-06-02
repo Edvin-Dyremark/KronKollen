@@ -31,7 +31,6 @@ fun DonutChart(
     val total = slices.sumOf { it.value }.coerceAtLeast(1)
     Canvas(modifier = modifier) {
         val stroke = Stroke(width = strokeWidth)
-        val inset = strokeWidth / 2
         val arcSize = androidx.compose.ui.geometry.Size(
             size.minDimension - strokeWidth,
             size.minDimension - strokeWidth,
@@ -65,7 +64,6 @@ fun DonutChart(
                 style = stroke,
             )
         }
-        @Suppress("UNUSED_EXPRESSION") inset
     }
 }
 
