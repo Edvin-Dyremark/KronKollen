@@ -13,6 +13,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY date DESC, id DESC")
     fun observeAll(): Flow<List<TransactionEntity>>
 
+    @Query("SELECT * FROM transactions ORDER BY date DESC, id DESC")
+    suspend fun getAll(): List<TransactionEntity>
+
     /**
      * Filtered, reverse-chronological list for the Transactions screen.
      * - [categoryId] null + [onlyUncategorized] false => any category

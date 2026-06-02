@@ -25,6 +25,7 @@ import com.kronkollen.ui.categories.CategoriesScreen
 import com.kronkollen.ui.importflow.ImportScreen
 import com.kronkollen.ui.navigation.TopDestination
 import com.kronkollen.ui.overview.OverviewScreen
+import com.kronkollen.ui.settings.SettingsScreen
 import com.kronkollen.ui.theme.KronKollenTheme
 import com.kronkollen.ui.transactions.TransactionsScreen
 
@@ -84,7 +85,11 @@ private fun AppRoot() {
                     onCategoryClick = { categoryId ->
                         navController.navigate("${TopDestination.Transactions.route}?categoryId=$categoryId")
                     },
+                    onOpenSettings = { navController.navigate("settings") },
                 )
+            }
+            composable("settings") {
+                SettingsScreen(onBack = { navController.popBackStack() })
             }
             composable(
                 route = "${TopDestination.Transactions.route}?categoryId={categoryId}",

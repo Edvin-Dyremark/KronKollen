@@ -2,6 +2,7 @@ package com.kronkollen.di
 
 import android.content.Context
 import androidx.room.Room
+import com.kronkollen.data.BackupManager
 import com.kronkollen.data.SampleDataSeeder
 import com.kronkollen.data.db.AppDatabase
 import com.kronkollen.data.prefs.SettingsDataStore
@@ -32,6 +33,12 @@ class AppContainer(context: Context) {
     )
 
     val settings = SettingsDataStore(context.applicationContext)
+
+    val backupManager = BackupManager(
+        categoryDao = database.categoryDao(),
+        keywordRuleDao = database.keywordRuleDao(),
+        transactionDao = database.transactionDao(),
+    )
 
     val sampleDataSeeder = SampleDataSeeder(
         categories = categoryRepository,

@@ -27,4 +27,7 @@ interface KeywordRuleDao {
 
     @Query("DELETE FROM keyword_rules WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM keyword_rules")
+    suspend fun deleteAll()
 }
