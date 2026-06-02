@@ -161,6 +161,10 @@ fun TransactionsScreen(
             categories = categories,
             current = tx.category?.id,
             onDismiss = { editing = null },
+            onDelete = {
+                viewModel.delete(tx.id)
+                editing = null
+            },
             onPick = { newCategoryId ->
                 viewModel.setCategory(tx.id, newCategoryId)
                 editing = null
@@ -251,6 +255,7 @@ private fun CategoryPickerDialog(
     categories: List<CategoryEntity>,
     current: Long?,
     onDismiss: () -> Unit,
+    onDelete: () -> Unit,
     onPick: (Long?) -> Unit,
 ) {
     androidx.compose.material3.AlertDialog(
@@ -276,7 +281,11 @@ private fun CategoryPickerDialog(
                 }
             }
         },
-        confirmButton = {},
+        confirmButton = {
+            TextButton(onClick = onDelete) {
+                Text("Ta bort", color = MaterialTheme.colorScheme.error)
+            }
+        },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Avbryt") } },
     )
 }
