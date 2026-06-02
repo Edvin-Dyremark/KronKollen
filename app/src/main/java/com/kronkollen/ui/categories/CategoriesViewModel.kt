@@ -42,6 +42,10 @@ class CategoriesViewModel(
         viewModelScope.launch { repository.updateCategory(category.copy(name = newName.trim())) }
     }
 
+    fun setCategoryColor(category: CategoryEntity, colorArgb: Int) {
+        viewModelScope.launch { repository.updateCategory(category.copy(colorArgb = colorArgb)) }
+    }
+
     fun deleteCategory(category: CategoryEntity) {
         viewModelScope.launch { repository.deleteCategory(category) }
     }

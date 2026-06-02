@@ -36,7 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kronkollen.ui.components.BarChart
 import com.kronkollen.ui.components.DonutChart
 import com.kronkollen.ui.components.DonutSlice
-import com.kronkollen.ui.components.LegendSwatch
 import com.kronkollen.ui.components.colorOf
 import com.kronkollen.ui.components.nameOf
 import com.kronkollen.util.Dates
@@ -57,8 +56,8 @@ fun OverviewScreen(
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (isSample) {
                 item { DemoBanner() }
@@ -76,10 +75,10 @@ fun OverviewScreen(
                 }
             }
 
-            item { SummaryCard(state) }
+            item { InfoStrip(state) }
 
             if (state.totalSpent > 0) {
-                item { SpendingByCategoryCard(state, onCategoryClick) }
+                item { SpendingSection(state, onCategoryClick) }
             } else {
                 item { EmptyCard() }
             }
@@ -92,75 +91,64 @@ fun OverviewScreen(
 }
 
 @Composable
-private fun SummaryCard(state: OverviewUiState) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+private fun InfoStrip(state: OverviewUiState) {
+    Column {
+        Text(
+            "${Dates.displayIso(state.range.start)} – ${Dates.displayIso(state.range.end)}",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Row(
+            modifier = Modifier.padding(top = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             Text(
-                "Utgifter ${Dates.displayIso(state.range.start)} – ${Dates.displayIso(state.range.end)}",
-                style = MaterialTheme.typography.labelMedium,
+                "${state.transactionCount} transaktioner",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
-                Money.format(state.totalSpent),
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-            Row(modifier = Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            state.latestDate?.let {
                 Text(
-                    "${state.transactionCount} transaktioner totalt",
+                    "Senaste ${Dates.displayIso(it)}",
                     style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                state.latestDate?.let {
-                    Text(
-                        "Senaste: ${Dates.displayIso(it)}",
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
             }
         }
     }
 }
 
 @Composable
-private fun SpendingByCategoryCard(state: OverviewUiState, onCategoryClick: (Long) -> Unit) {
-    Card {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Per kategori", style = MaterialTheme.typography.titleMedium)
-            Box(
+private fun SpendingSection(state: OverviewUiState, onCategoryClick: (Long) -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            DonutChart(
+                slices = state.slices.map { DonutSlice(colorOf(it.category), it.amount) },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                DonutChart(
-                    slices = state.slices.map { DonutSlice(colorOf(it.category), it.amount) },
-                    modifier = Modifier
-                        .size(180.dp)
-                        .aspectRatio(1f),
+                    .size(200.dp)
+                    .aspectRatio(1f),
+            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "Totalt",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "Totalt",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        Money.formatWhole(state.totalSpent),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                Text(
+                    Money.formatWhole(state.totalSpent),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
             }
-            state.slices.forEach { slice ->
-                CategoryRow(slice = slice, onClick = {
-                    slice.category?.id?.let(onCategoryClick)
-                })
-            }
+        }
+        state.slices.forEach { slice ->
+            CategoryRow(slice = slice, onClick = {
+                slice.category?.id?.let(onCategoryClick)
+            })
         }
     }
 }

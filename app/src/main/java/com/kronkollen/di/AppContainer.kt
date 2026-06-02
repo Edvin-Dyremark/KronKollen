@@ -19,7 +19,7 @@ class AppContainer(context: Context) {
         context.applicationContext,
         AppDatabase::class.java,
         "kronkollen.db",
-    ).build()
+    ).addMigrations(AppDatabase.MIGRATION_1_2).build()
 
     val categoryRepository = CategoryRepository(
         categoryDao = database.categoryDao(),

@@ -18,11 +18,14 @@ import com.kronkollen.ui.theme.CategoryPalette
 const val UNCATEGORIZED_LABEL = "Okategoriserat"
 val UncategorizedColor = Color(0xFF9E9E9E)
 
-// Colour is derived from the category's stable sort index into the palette (not the value
-// stored in the DB), so palette changes show immediately without reseeding.
-fun colorOf(category: CategoryEntity?): Color =
-    if (category == null) UncategorizedColor
-    else CategoryPalette[category.sortOrder.mod(CategoryPalette.size)]
+// colorArgb == 0 means "no manual override": fall back to a stable palette colour derived
+// from the category's sort index (so default palette changes show without reseeding). A
+// non-zero value is a colour the user picked and applies everywhere.
+fun colorOf(category: CategoryEntity?): Color = when {
+    category == null -> UncategorizedColor
+    category.colorArgb != 0 -> Color(category.colorArgb)
+    else -> CategoryPalette[category.sortOrder.mod(CategoryPalette.size)]
+}
 
 fun nameOf(category: CategoryEntity?): String =
     category?.name ?: UNCATEGORIZED_LABEL

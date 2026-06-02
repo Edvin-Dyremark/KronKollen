@@ -3,9 +3,7 @@ package com.kronkollen.data.repo
 import com.kronkollen.data.db.CategoryDao
 import com.kronkollen.data.db.KeywordRuleDao
 import com.kronkollen.data.entity.CategoryEntity
-import androidx.compose.ui.graphics.toArgb
 import com.kronkollen.data.entity.KeywordRuleEntity
-import com.kronkollen.ui.theme.CategoryPalette
 import kotlinx.coroutines.flow.Flow
 
 class CategoryRepository(
@@ -22,9 +20,9 @@ class CategoryRepository(
 
     suspend fun addCategory(name: String): Long {
         val existing = categoryDao.count()
-        val color = CategoryPalette[existing % CategoryPalette.size].toArgb()
+        // colorArgb = 0 => no manual override; colour comes from the palette by sort index.
         return categoryDao.insert(
-            CategoryEntity(name = name.trim(), colorArgb = color, sortOrder = existing),
+            CategoryEntity(name = name.trim(), colorArgb = 0, sortOrder = existing),
         )
     }
 
