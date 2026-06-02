@@ -13,12 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kronkollen.data.entity.CategoryEntity
+import com.kronkollen.ui.theme.CategoryPalette
 
 const val UNCATEGORIZED_LABEL = "Okategoriserat"
 val UncategorizedColor = Color(0xFF9E9E9E)
 
+// Colour is derived from the category's stable sort index into the palette (not the value
+// stored in the DB), so palette changes show immediately without reseeding.
 fun colorOf(category: CategoryEntity?): Color =
-    if (category == null) UncategorizedColor else Color(category.colorArgb)
+    if (category == null) UncategorizedColor
+    else CategoryPalette[category.sortOrder.mod(CategoryPalette.size)]
 
 fun nameOf(category: CategoryEntity?): String =
     category?.name ?: UNCATEGORIZED_LABEL

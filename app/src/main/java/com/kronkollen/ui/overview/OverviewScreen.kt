@@ -50,6 +50,7 @@ fun OverviewScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val isSample by viewModel.isSampleData.collectAsStateWithLifecycle()
+    val trend by viewModel.monthlyTrend.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Översikt") }) },
@@ -79,11 +80,12 @@ fun OverviewScreen(
 
             if (state.totalSpent > 0) {
                 item { SpendingByCategoryCard(state, onCategoryClick) }
-                if (state.months.size >= 2) {
-                    item { TrendCard(state) }
-                }
             } else {
                 item { EmptyCard() }
+            }
+
+            if (trend.isNotEmpty()) {
+                item { TrendCard(trend) }
             }
         }
     }
@@ -205,12 +207,12 @@ private fun CategoryRow(slice: CategorySlice, onClick: () -> Unit) {
 }
 
 @Composable
-private fun TrendCard(state: OverviewUiState) {
+private fun TrendCard(months: List<MonthBar>) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Utgifter per månad", style = MaterialTheme.typography.titleMedium)
             BarChart(
-                bars = state.months.map { it.label to it.amount },
+                bars = months.map { it.label to it.amount },
                 barColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .fillMaxWidth()

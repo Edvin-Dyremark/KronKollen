@@ -58,17 +58,17 @@ val md_onSurfaceVariant_dark = Color(0xFFC1C9BD)
 val md_outline_dark = Color(0xFF8B938A)
 val md_outlineVariant_dark = Color(0xFF414941)
 
-// Harmonious data-viz palette tuned for the dark theme: consistent chroma/value so the
-// donut and chips read as one set rather than a clashing swatch grid.
+// Vivid but coordinated data-viz palette: high, even saturation so the donut pops on the
+// dark theme without the random-crayon-box look.
 val CategoryPalette = listOf(
-    Color(0xFF8DD3A6), // mint
-    Color(0xFF6FB3D1), // sky
-    Color(0xFFE0B589), // sand
-    Color(0xFFC79BD1), // lilac
-    Color(0xFFE89B9B), // coral
-    Color(0xFF9DC88D), // sage
-    Color(0xFFE8CE84), // gold
-    Color(0xFF8FA6D1), // periwinkle
-    Color(0xFF7ECEC4), // teal
-    Color(0xFFD79AB0), // rose
+    Color(0xFF34D399), // emerald
+    Color(0xFF60A5FA), // blue
+    Color(0xFFFBBF24), // amber
+    Color(0xFFA78BFA), // violet
+    Color(0xFFF87171), // coral red
+    Color(0xFF4ADE80), // green
+    Color(0xFF22D3EE), // cyan
+    Color(0xFFF472B6), // pink
+    Color(0xFFFB923C), // orange
+    Color(0xFF2DD4BF), // teal
 )

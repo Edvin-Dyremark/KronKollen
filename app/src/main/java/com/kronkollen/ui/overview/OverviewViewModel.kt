@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import java.time.YearMonth
@@ -46,7 +47,6 @@ data class OverviewUiState(
     val range: DateRange = DateRange(LocalDate.now().withDayOfMonth(1), LocalDate.now()),
     val totalSpent: Long = 0,
     val slices: List<CategorySlice> = emptyList(),
-    val months: List<MonthBar> = emptyList(),
     val latestDate: LocalDate? = null,
     val transactionCount: Int = 0,
 )
@@ -65,16 +65,24 @@ class OverviewViewModel(
         settings.sampleDataPresent
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
+    // Spending per month for the last 6 months, shown at the bottom regardless of the
+    // selected range so there's always a trend to look at.
+    val monthlyTrend: StateFlow<List<MonthBar>> = run {
+        val end = LocalDate.now()
+        val start = end.minusMonths(5).withDayOfMonth(1)
+        transactions.observeExpenseRows(start, end)
+    }.map { rows -> buildMonths(rows.map { it.date to abs(it.amount) }) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     val uiState: StateFlow<OverviewUiState> =
         combine(preset, custom) { p, c -> p to resolveRange(p, c) }
             .flatMapLatest { (p, range) ->
                 combine(
                     transactions.observeCategoryTotals(range.start, range.end),
                     categoriesRepo.observeCategories(),
-                    transactions.observeExpenseRows(range.start, range.end),
                     transactions.observeLatestDate(),
                     transactions.observeCount(),
-                ) { totals, cats, rows, latest, count ->
+                ) { totals, cats, latest, count ->
                     val byId = cats.associateBy { it.id }
                     val magnitudes = totals
                         .map { it.categoryId to abs(it.total) }
@@ -94,7 +102,6 @@ class OverviewViewModel(
                         range = range,
                         totalSpent = totalSpent,
                         slices = slices,
-                        months = buildMonths(rows.map { it.date to abs(it.amount) }),
                         latestDate = latest,
                         transactionCount = count,
                     )

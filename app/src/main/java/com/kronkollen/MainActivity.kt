@@ -74,7 +74,10 @@ private fun AppRoot() {
         NavHost(
             navController = navController,
             startDestination = TopDestination.Overview.route,
-            modifier = Modifier.padding(innerPadding),
+            // Only consume the bottom (nav bar) inset here; each screen's own TopAppBar
+            // handles the status-bar inset, so applying the full innerPadding would double
+            // it and leave a big gap above the title.
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         ) {
             composable(TopDestination.Overview.route) {
                 OverviewScreen(

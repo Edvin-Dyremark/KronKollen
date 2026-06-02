@@ -14,7 +14,7 @@ enum class TopDestination(
     val icon: ImageVector,
 ) {
     Overview("overview", "Översikt", Icons.Filled.PieChart),
-    Transactions("transactions", "Transaktioner", Icons.AutoMirrored.Filled.ListAlt),
+    Transactions("transactions", "Historik", Icons.AutoMirrored.Filled.ListAlt),
     Categories("categories", "Kategorier", Icons.Filled.Sell),
     Import("import", "Importera", Icons.Filled.UploadFile),
 }
