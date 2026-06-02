@@ -23,8 +23,9 @@ import java.time.format.TextStyle
 import kotlin.math.abs
 
 enum class RangePreset(val label: String) {
-    THIS_YEAR("I år"),
     THIS_MONTH("Denna månad"),
+    LAST_30("Senaste 30 dgr"),
+    THIS_YEAR("I år"),
     LAST_12("Senaste 12 mån"),
     CUSTOM("Anpassat"),
 }
@@ -41,8 +42,8 @@ data class CategorySlice(
 data class MonthBar(val label: String, val amount: Long)
 
 data class OverviewUiState(
-    val preset: RangePreset = RangePreset.THIS_YEAR,
-    val range: DateRange = DateRange(LocalDate.now().withDayOfYear(1), LocalDate.now()),
+    val preset: RangePreset = RangePreset.THIS_MONTH,
+    val range: DateRange = DateRange(LocalDate.now().withDayOfMonth(1), LocalDate.now()),
     val totalSpent: Long = 0,
     val slices: List<CategorySlice> = emptyList(),
     val months: List<MonthBar> = emptyList(),
@@ -57,7 +58,7 @@ class OverviewViewModel(
     settings: SettingsDataStore,
 ) : ViewModel() {
 
-    private val preset = MutableStateFlow(RangePreset.THIS_YEAR)
+    private val preset = MutableStateFlow(RangePreset.THIS_MONTH)
     private val custom = MutableStateFlow<DateRange?>(null)
 
     val isSampleData: StateFlow<Boolean> =
@@ -116,6 +117,8 @@ class OverviewViewModel(
             RangePreset.THIS_YEAR -> DateRange(today.withDayOfYear(1), today)
             RangePreset.THIS_MONTH ->
                 DateRange(today.withDayOfMonth(1), today)
+            RangePreset.LAST_30 ->
+                DateRange(today.minusDays(29), today)
             RangePreset.LAST_12 ->
                 DateRange(today.minusMonths(11).withDayOfMonth(1), today)
             RangePreset.CUSTOM -> customRange ?: DateRange(today.withDayOfYear(1), today)
