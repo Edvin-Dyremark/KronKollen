@@ -67,8 +67,9 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun KronKollenTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Material You: adopt the device wallpaper palette on Android 12+.
-    dynamicColor: Boolean = true,
+    // Off by default: we want our own intentional palette, not the wallpaper's. Material You
+    // can still be opted into per-call if ever wanted.
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
@@ -82,6 +83,7 @@ fun KronKollenTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
+        shapes = AppShapes,
         content = content,
     )
 }
