@@ -14,9 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /** A wedge of the donut: a colour and a positive value. */
@@ -26,43 +30,47 @@ data class DonutSlice(val color: Color, val value: Long)
 fun DonutChart(
     slices: List<DonutSlice>,
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 48f,
+    strokeWidth: Dp = 20.dp,
+    gapDegrees: Float = 4f,
 ) {
-    val total = slices.sumOf { it.value }.coerceAtLeast(1)
+    val data = slices.filter { it.value > 0 }
+    val total = data.sumOf { it.value }.coerceAtLeast(1)
     Canvas(modifier = modifier) {
-        val stroke = Stroke(width = strokeWidth)
-        val arcSize = androidx.compose.ui.geometry.Size(
-            size.minDimension - strokeWidth,
-            size.minDimension - strokeWidth,
-        )
-        val topLeft = androidx.compose.ui.geometry.Offset(
-            (size.width - arcSize.width) / 2,
-            (size.height - arcSize.height) / 2,
-        )
-        var startAngle = -90f
-        for (slice in slices) {
-            val sweep = 360f * (slice.value.toFloat() / total)
+        val sw = strokeWidth.toPx()
+        val diameter = size.minDimension - sw
+        val arcSize = Size(diameter, diameter)
+        val topLeft = Offset((size.width - diameter) / 2f, (size.height - diameter) / 2f)
+
+        if (data.isEmpty()) {
+            drawArc(
+                color = UncategorizedColor.copy(alpha = 0.25f),
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(width = sw),
+            )
+            return@Canvas
+        }
+
+        // Rounded caps + small gaps make the ring read as a designed chart, not a raw arc.
+        val stroke = Stroke(width = sw, cap = StrokeCap.Round)
+        val gap = if (data.size > 1) gapDegrees else 0f
+        val sweepBudget = 360f - gap * data.size
+        var start = -90f + gap / 2f
+        for (slice in data) {
+            val sweep = sweepBudget * (slice.value.toFloat() / total)
             drawArc(
                 color = slice.color,
-                startAngle = startAngle,
+                startAngle = start,
                 sweepAngle = sweep,
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
                 style = stroke,
             )
-            startAngle += sweep
-        }
-        if (slices.isEmpty()) {
-            drawArc(
-                color = UncategorizedColor.copy(alpha = 0.3f),
-                startAngle = 0f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = stroke,
-            )
+            start += sweep + gap
         }
     }
 }

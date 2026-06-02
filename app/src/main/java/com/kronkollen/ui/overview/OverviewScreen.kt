@@ -1,5 +1,6 @@
 package com.kronkollen.ui.overview
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -100,7 +103,7 @@ private fun SummaryCard(state: OverviewUiState) {
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(
-                Money.format(-state.totalSpent),
+                Money.format(state.totalSpent),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 4.dp),
@@ -145,45 +148,59 @@ private fun SpendingByCategoryCard(state: OverviewUiState, onCategoryClick: (Lon
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        Money.formatWhole(-state.totalSpent),
+                        Money.formatWhole(state.totalSpent),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
                 }
             }
             state.slices.forEach { slice ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .let { m ->
-                            val id = slice.category?.id
-                            if (id != null) m.clickable { onCategoryClick(id) } else m
-                        }
-                        .padding(vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    LegendSwatch(colorOf(slice.category))
-                    Text(
-                        nameOf(slice.category),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Text(
-                        "${(slice.fraction * 100).toInt()} %",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.padding(end = 12.dp),
-                    )
-                    Text(
-                        Money.format(-slice.amount),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+                CategoryRow(slice = slice, onClick = {
+                    slice.category?.id?.let(onCategoryClick)
+                })
             }
         }
+    }
+}
+
+@Composable
+private fun CategoryRow(slice: CategorySlice, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .let { if (slice.category != null) it.clickable(onClick = onClick) else it }
+            .padding(vertical = 10.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = 4.dp, height = 34.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(colorOf(slice.category)),
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 12.dp),
+        ) {
+            Text(
+                nameOf(slice.category),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                "${(slice.fraction * 100).toInt()} %",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(
+            Money.formatWhole(slice.amount),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
