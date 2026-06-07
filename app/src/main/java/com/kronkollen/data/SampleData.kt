@@ -27,9 +27,11 @@ class SampleDataSeeder(
         // A few starter keyword rules so auto-categorization works out of the box.
         val starterRules = listOf(
             "ica" to "Mat", "coop" to "Mat", "hemköp" to "Mat",
-            "sl" to "Transport", "sj" to "Transport",
-            "hyra" to "Boende", "vattenfall" to "Räkningar",
-            "spotify" to "Nöje", "netflix" to "Nöje",
+            "sl" to "Transport", "sj" to "Resor",
+            "hyra" to "Boende",
+            "vattenfall" to "Abonnemang", "telia" to "Abonnemang",
+            "spotify" to "Abonnemang", "netflix" to "Abonnemang",
+            "restaurang" to "Restaurang", "sats" to "Sport",
             "apotek" to "Hälsa", "h&m" to "Shopping",
         )
         starterRules.forEach { (kw, cat) ->
@@ -62,21 +64,23 @@ class SampleDataSeeder(
             fun day(d: Int) = base.withDayOfMonth(minOf(d, base.lengthOfMonth()))
             val jitter = (m % 3) * 17.0 // small per-month variation
 
-            add(day(25), "Lön", 32000.0, null)
+            add(day(25), "Lön", 32000.0, "Inkomst")
             add(day(1), "Hyra Lägenhet", -8500.0, "Boende")
-            add(day(3), "Vattenfall El", -445.50 - jitter, "Räkningar")
-            add(day(4), "Telia Mobil", -299.0, "Räkningar")
+            add(day(3), "Vattenfall El", -445.50 - jitter, "Abonnemang")
+            add(day(4), "Telia Mobil", -299.0, "Abonnemang")
             add(day(2), "SL Access månadskort", -930.0, "Transport")
             add(day(5), "ICA Maxi Stormarknad", -842.30 - jitter, "Mat")
             add(day(11), "Coop Konsum", -534.10 + jitter, "Mat")
             add(day(19), "ICA Nära Sabbatsberg", -276.80, "Mat")
             add(day(23), "Hemköp", -312.40 + jitter, "Mat")
-            add(day(8), "Spotify", -119.0, "Nöje")
-            add(day(15), "Netflix", -139.0, "Nöje")
-            add(day(20), "Restaurang Pong", -468.0 - jitter, "Nöje")
+            add(day(8), "Spotify", -119.0, "Abonnemang")
+            add(day(15), "Netflix", -139.0, "Abonnemang")
+            add(day(20), "Restaurang Pong", -468.0 - jitter, "Restaurang")
+            add(day(6), "SATS Träning", -799.0, "Sport")
             add(day(17), "Apotek Hjärtat", -189.50, "Hälsa")
             add(day(22), "H&M", -399.0 + jitter, "Shopping")
-            if (m % 2 == 0L) add(day(14), "SJ Biljett Stockholm-Göteborg", -645.0, "Transport")
+            add(day(26), "Överföring Sparkonto", -2000.0, "Sparande")
+            if (m % 2 == 0L) add(day(14), "SJ Biljett Stockholm-Göteborg", -645.0, "Resor")
             if (m % 2 == 1L) add(day(9), "Clas Ohlson", -248.0, "Shopping")
             add(day(10), "Swish Anna", -250.0, null)
         }

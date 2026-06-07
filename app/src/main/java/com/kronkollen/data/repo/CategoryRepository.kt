@@ -45,7 +45,8 @@ class CategoryRepository(
     suspend fun seedDefaultsIfEmpty() {
         if (categoryDao.count() > 0) return
         listOf(
-            "Mat", "Transport", "Boende", "Nöje", "Hälsa", "Shopping", "Räkningar",
+            "Inkomst", "Boende", "Abonnemang", "Mat", "Restaurang", "Transport",
+            "Resor", "Sport", "Hälsa", "Shopping", "Sparande", "Övrigt",
         ).forEach { addCategory(it) }
     }
 }
