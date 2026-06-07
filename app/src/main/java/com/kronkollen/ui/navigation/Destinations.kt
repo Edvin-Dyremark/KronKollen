@@ -3,6 +3,7 @@ package com.kronkollen.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -16,5 +17,6 @@ enum class TopDestination(
     Overview("overview", "Översikt", Icons.Filled.PieChart),
     Transactions("transactions", "Historik", Icons.AutoMirrored.Filled.ListAlt),
     Categories("categories", "Kategorier", Icons.Filled.Sell),
+    Budget("budget", "Budget", Icons.Filled.Savings),
     Import("import", "Importera", Icons.Filled.UploadFile),
 }

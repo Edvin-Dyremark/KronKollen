@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kronkollen.ui.budget.BudgetScreen
 import com.kronkollen.ui.categories.CategoriesScreen
 import com.kronkollen.ui.importflow.ImportScreen
 import com.kronkollen.ui.navigation.TopDestination
@@ -105,6 +106,7 @@ private fun AppRoot() {
                 TransactionsScreen(initialCategoryId = categoryId)
             }
             composable(TopDestination.Categories.route) { CategoriesScreen() }
+            composable(TopDestination.Budget.route) { BudgetScreen() }
             composable(TopDestination.Import.route) { ImportScreen() }
         }
     }

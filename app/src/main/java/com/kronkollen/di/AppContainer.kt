@@ -6,6 +6,7 @@ import com.kronkollen.data.BackupManager
 import com.kronkollen.data.SampleDataSeeder
 import com.kronkollen.data.db.AppDatabase
 import com.kronkollen.data.prefs.SettingsDataStore
+import com.kronkollen.data.repo.BudgetRepository
 import com.kronkollen.data.repo.CategoryRepository
 import com.kronkollen.data.repo.TransactionRepository
 
@@ -20,7 +21,7 @@ class AppContainer(context: Context) {
         context.applicationContext,
         AppDatabase::class.java,
         "kronkollen.db",
-    ).addMigrations(AppDatabase.MIGRATION_1_2).build()
+    ).addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3).build()
 
     val categoryRepository = CategoryRepository(
         categoryDao = database.categoryDao(),
@@ -32,12 +33,17 @@ class AppContainer(context: Context) {
         keywordRuleDao = database.keywordRuleDao(),
     )
 
+    val budgetRepository = BudgetRepository(
+        budgetDao = database.budgetDao(),
+    )
+
     val settings = SettingsDataStore(context.applicationContext)
 
     val backupManager = BackupManager(
         categoryDao = database.categoryDao(),
         keywordRuleDao = database.keywordRuleDao(),
         transactionDao = database.transactionDao(),
+        budgetDao = database.budgetDao(),
     )
 
     val sampleDataSeeder = SampleDataSeeder(

@@ -1,8 +1,10 @@
 package com.kronkollen.data
 
+import com.kronkollen.data.db.BudgetDao
 import com.kronkollen.data.db.CategoryDao
 import com.kronkollen.data.db.KeywordRuleDao
 import com.kronkollen.data.db.TransactionDao
+import com.kronkollen.data.entity.BudgetEntity
 import com.kronkollen.data.entity.CategoryEntity
 import com.kronkollen.data.entity.KeywordRuleEntity
 import com.kronkollen.data.entity.TransactionEntity
@@ -14,6 +16,7 @@ data class RestoreResult(
     val categories: Int,
     val keywordRules: Int,
     val transactions: Int,
+    val budgets: Int,
 )
 
 /**
@@ -25,9 +28,11 @@ class BackupManager(
     private val categoryDao: CategoryDao,
     private val keywordRuleDao: KeywordRuleDao,
     private val transactionDao: TransactionDao,
+    private val budgetDao: BudgetDao,
 ) {
     companion object {
-        private const val FORMAT_VERSION = 1
+        // v2 added the "budgets" array. Restore stays backward-compatible with v1 files.
+        private const val FORMAT_VERSION = 2
     }
 
     suspend fun exportJson(): String {
@@ -73,6 +78,16 @@ class BackupManager(
         }
         root.put("transactions", txs)
 
+        val budgets = JSONArray()
+        for (b in budgetDao.getAll()) {
+            budgets.put(
+                JSONObject()
+                    .put("categoryId", b.categoryId)
+                    .put("amountOre", b.amountOre),
+            )
+        }
+        root.put("budgets", budgets)
+
         return root.toString(2)
     }
 
@@ -106,8 +121,16 @@ class BackupManager(
                 importedAt = o.optLong("importedAt", System.currentTimeMillis()),
             )
         }
+        // Optional: v1 backups have no "budgets" array.
+        val budgets = (root.optJSONArray("budgets") ?: JSONArray()).map { o ->
+            BudgetEntity(
+                categoryId = o.getLong("categoryId"),
+                amountOre = o.getLong("amountOre"),
+            )
+        }
 
         // Wipe in FK-safe order, then insert parents before children.
+        budgetDao.deleteAll()
         keywordRuleDao.deleteAll()
         transactionDao.deleteAll()
         categoryDao.deleteAll()
@@ -115,8 +138,9 @@ class BackupManager(
         categories.forEach { categoryDao.insert(it) }
         rules.forEach { keywordRuleDao.insert(it) }
         if (transactions.isNotEmpty()) transactionDao.insertAll(transactions)
+        budgets.forEach { budgetDao.upsert(it) }
 
-        return RestoreResult(categories.size, rules.size, transactions.size)
+        return RestoreResult(categories.size, rules.size, transactions.size, budgets.size)
     }
 
     private inline fun <T> JSONArray.map(transform: (JSONObject) -> T): List<T> =
