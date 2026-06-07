@@ -24,17 +24,8 @@ class SampleDataSeeder(
 
         val byName = categories.getCategories().associateBy { it.name }
 
-        // A few starter keyword rules so auto-categorization works out of the box.
-        val starterRules = listOf(
-            "ica" to "Mat", "coop" to "Mat", "hemköp" to "Mat",
-            "sl" to "Transport", "sj" to "Resor",
-            "hyra" to "Boende",
-            "vattenfall" to "Abonnemang", "telia" to "Abonnemang",
-            "spotify" to "Abonnemang", "netflix" to "Abonnemang",
-            "restaurang" to "Restaurang", "sats" to "Sport",
-            "apotek" to "Hälsa", "h&m" to "Shopping",
-        )
-        starterRules.forEach { (kw, cat) ->
+        // Seed the canonical default keyword rules so auto-categorization works out of the box.
+        DefaultKeywords.rules.forEach { (kw, cat) ->
             byName[cat]?.let { categories.addKeyword(kw, it.id) }
         }
 
@@ -80,7 +71,7 @@ class SampleDataSeeder(
             add(day(17), "Apotek Hjärtat", -189.50, "Hälsa")
             add(day(22), "H&M", -399.0 + jitter, "Shopping")
             add(day(26), "Överföring Sparkonto", -2000.0, "Sparande")
-            if (m % 2 == 0L) add(day(14), "SJ Biljett Stockholm-Göteborg", -645.0, "Resor")
+            if (m % 2 == 0L) add(day(14), "SJ Biljett Stockholm-Göteborg", -645.0, "Transport")
             if (m % 2 == 1L) add(day(9), "Clas Ohlson", -248.0, "Shopping")
             add(day(10), "Swish Anna", -250.0, null)
         }
